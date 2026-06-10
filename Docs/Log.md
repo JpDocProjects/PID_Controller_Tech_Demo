@@ -7,5 +7,5 @@ me calibrate the PID values without complication, and evaluate the outcomes.
 - Had some ideas and searched for inspirations on the internet. The final idea is to control a ball's position
 relative to an ultrassonic sensor. Using a PID control system, a servo will adjust the angle of the platform's
 inclination based on the current ball position. It should look something like this (sketch): 
-<img src="PID_Controller_Tech_Demo/images/sketch.png" alt="Sketch 1" width="500">
+<img src="PID_Controller_Tech_Demo/images/sketch.png" alt="Sketch_1" width="500">
 
