@@ -1,3 +1,9 @@
 08/06/26 
-- I need to improve my PID controller logic and mechanical assembly capabilities, so I will try to design a project that helps me improve in both aspects. I think that it need to have a simple goal, in order to help me calibrate the PID values without complication, and evaluate the outcomes.
+- I need to improve my PID controller logic and mechanical assembly capabilities, so I will try to design
+a project that helps me improve in both aspects.I think that it need to have a simple goal, in order to help
+me calibrate the PID values without complication, and evaluate the outcomes.
 
+09/06/26
+- Had some ideas and searched for inspirations on the internet. The final idea is to control a ball's position
+relative to an ultrassonic sensor. Using a PID control system, a servo will adjust the angle of the platform's
+inclination based on the current ball position. It should look something like this (sketch): 
