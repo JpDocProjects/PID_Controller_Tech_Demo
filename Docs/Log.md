@@ -11,6 +11,7 @@ inclination based on the current ball position. It should look something like th
 
 - Built support for the sensor and the rail, but I couldnt find anything to hold a ball, will change to car track and hotwheels car.
 - I think that the miniservo isnt going to support the weight, thinking about ways to reduce it.
+
 10/06/26
 - Finished the build, but miniservo cant handle the weight, so I will need to reduce the weight and try again
 - Reduced the weight and the servo still cant work properly, I will need either two miniservos, or use a stronger
@@ -18,6 +19,7 @@ step motor (dont know how that would work).
 - Added another miniservo in the same axis, but they are acting weird and cant mantain 100% alignment.
 - Decided that I will try to make the sensor work first, but this seems to bring some problems with the
 servo library, so I will try that later.
+
 11/06/26
 - As the two miniservos didnt work, I will toy with my step motor and see if I can pull this off. I think
 that the step motor is too slow/sluggish, but can handle the weight.
