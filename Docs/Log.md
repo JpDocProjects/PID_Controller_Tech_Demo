@@ -8,6 +8,7 @@ me calibrate the PID values without complication, and evaluate the outcomes.
 relative to an ultrassonic sensor. Using a PID control system, a servo will adjust the angle of the platform's
 inclination based on the current ball position. It should look something like this (sketch): 
 <img width="796" height="483" alt="Sketch 1" src="https://github.com/user-attachments/assets/81500629-0d7c-4e49-9103-2b99bd563f46" />
+
 - Built support for the sensor and the rail, but I couldnt find anything to hold a ball, will change to car track and hotwheels car.
 - I think that the miniservo isnt going to support the weight, thinking about ways to reduce it.
 10/06/26
