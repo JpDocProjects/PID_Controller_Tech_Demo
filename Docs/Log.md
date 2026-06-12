@@ -9,7 +9,8 @@ relative to an ultrassonic sensor. Using a PID control system, a servo will adju
 inclination based on the current ball position. It should look something like this (sketch): 
 <img width="398" height="241" alt="Sketch 1" src="https://github.com/user-attachments/assets/81500629-0d7c-4e49-9103-2b99bd563f46" />
 
-- Built support for the sensor and the rail, but I couldnt find anything to hold a ball, will change to car track and hotwheels car.
+- Built support for the sensor and the rail, but I couldnt find anything to hold a ball, will change to car track
+and hotwheels car with a flat cardboard surface on top of it, so that the sensor can detect it easier.
 - I think that the miniservo isnt going to support the weight, thinking about ways to reduce it.
 
 10/06/26
@@ -21,6 +22,12 @@ step motor (dont know how that would work).
 servo library, so I will try that later.
 
 11/06/26
-- As the two miniservos didnt work, I will toy with my step motor and see if I can pull this off. I think
-that the step motor is too slow/sluggish, but can handle the weight.
+- Thought that the miniservos problem was not a big deal, so I tried fixing it by improving the support for the
+servos and adding a platform connecting their bases. It worked.
+- The problem for the sensor suddently dissapeared too, it is detecting the proper distance, so I only need to assemble
+everything and put the cardboard on top of the car for easy detection.
+- Everything is ready, the distance is being detected, and the servos are responding accordingly, now, only the code
+needs to be tweaked. I will try to implement a PD first, as I am already familiar with the system. The I part will come
+later, I dont know how to implement it very well.
+-
 
