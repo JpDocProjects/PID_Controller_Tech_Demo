@@ -29,5 +29,17 @@ everything and put the cardboard on top of the car for easy detection.
 - Everything is ready, the distance is being detected, and the servos are responding accordingly, now, only the code
 needs to be tweaked. I will try to implement a PD first, as I am already familiar with the system. The I part will come
 later, I dont know how to implement it very well.
--
 
+16/06/26
+-The servos were a BIG problem. After trying to implement the basic system, I realised that the old setup with duct tape
+and plastic gear microservos was not going to work. It is hard to stabilize them using duct tape, and it is worse to maintain
+the two working in the same exact axis. So I bought a metal geared microservo.
+-To fix the lego-servo connection, I tried using hot glue, and it worked, now I am 100% sure that the structure is not a problem.
+-Got started with testing the proportional controller. In my setup, the Kp represents the variation of angle per centimeter of error,
+as in Angle = 100 (base stable angle) + Kp * error. 2.5 was too small, 6 too big, and 4.5 is the current value.
+-Added averaging distance signals, because the sensor is a little bit clanky.
+-Coded the Derivative controller: (previous error - current error) tells the system if the error is increasing or decreasing. Multiply
+that by a fixed value (Kd), and then add the result to the final angle.
+-I think that the integral controller is going to help the system a lot, because the final error stops in the -1 to 1 range, the integral
+controller fixes the problem. I dont have any ideia on how I can start to code the integral controller (I think that it is a little bit harder).
+Going to search how to do that.
