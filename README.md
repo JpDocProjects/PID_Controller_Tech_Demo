@@ -1,5 +1,7 @@
 # PID_Controller_Tech_Demo
-A Ball & Beam–style Arduino project that uses a PID control system to regulate the position of an object along a straight line. The main components are an ultrasonic sensor, a metal gear servo, and a LEGO-based support structure.
+A Ball & Beam analogue Arduino project that uses a PID system to control an object's position along a straight line. The most important components are an ultrasonic sensor, a metal-geared servo, and a series of joints in a LEGO support structure.
+
+The ultrasonic sensor measures the object's distance relative to a reference point determined by a potentiometer. This offset is sent into a PID controller, which calculates the new angle for the micro servo to reduce the offset and move the object to the desired position.
 
 ![Black Background](images/Black_Background(edited).png)
 
@@ -23,11 +25,7 @@ When summed, these give the final desired servo position. The constants need to 
 - Arduino UNO
 - LEGO
 - Toy car
-- Metal-gear micro servo
+- Metal-geared micro servo
 - Cardboard
 - Potentiometer
 - Ultrasonic sensor
-
-## Programs used
-
-- Arduino IDE
