@@ -15,7 +15,6 @@ object toward the target position.
 # PID Controller
 
 - The final PID output (angle) is calculated as:
-
 base value + (P value) + (I value) + (D value)
 
 P value = (error offset * P constant)
