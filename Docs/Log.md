@@ -43,3 +43,7 @@ that by a fixed value (Kd), and then add the result to the final angle.
 - I think that the integral controller is going to help the system a lot, because the final error stops in the -1 to 1 range, the integral
 controller fixes the problem. I dont have any ideia on how I can start to code the integral controller (I think that it is a little bit harder).
 Going to search how to do that.
+
+23/06/26
+- Everything is "finished", the PID control is fully implemented, and Claude made me an HTML extension that graphs the important data in real time for
+easy feedback. Going to add an "important conclusions" doc for the github project.
