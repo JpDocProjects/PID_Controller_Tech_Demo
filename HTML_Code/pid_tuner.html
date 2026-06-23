@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PID Live Tuner</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0f0f0f;
+      --bg2:       #1a1a1a;
+      --text:      #e0e0e0;
+      --text-dim:  #888;
+      --text-mid:  #aaa;
+      --border:    #2a2a2a;
+      --panel-hd:  #888;
+      --label:     #ccc;
+      --stat-val:  #e0e0e0;
+      --badge-bg:  #222;
+      --badge-bd:  #555;
+      --clear-bg:  #444;
+      --interp-bg: #333;
+    }
+
+    body.light {
+      --bg:        #f0f0f0;
+      --bg2:       #ffffff;
+      --text:      #111111;
+      --text-dim:  #666;
+      --text-mid:  #555;
+      --border:    #ddd;
+      --panel-hd:  #666;
+      --label:     #333;
+      --stat-val:  #111;
+      --badge-bg:  #e8e8e8;
+      --badge-bd:  #bbb;
+      --clear-bg:  #bbb;
+      --interp-bg: #ccc;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      padding: 12px;
+      gap: 12px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    h1 {
+      font-size: 1.1rem;
+      color: var(--text-mid);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    #top {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    button {
+      padding: 8px 18px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+
+    #connectBtn  { background: #2a7a2a; color: white; }
+    #connectBtn:hover { background: #3a9a3a; }
+    #connectBtn.connected { background: #7a2a2a; }
+
+    #interpBtn { background: var(--interp-bg); color: var(--text); }
+    #interpBtn.on { background: #1a5c1a; color: white; }
+
+    #clearBtn { background: var(--clear-bg); color: var(--text); }
+
+    #themeBtn { background: var(--interp-bg); color: var(--text); min-width: 36px; }
+
+    #status {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-left: auto;
+    }
+
+    #error-badge {
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: bold;
+      background: var(--badge-bg);
+      border: 1px solid var(--badge-bd);
+      min-width: 160px;
+      text-align: center;
+    }
+
+    #main {
+      display: flex;
+      gap: 12px;
+      flex: 1;
+      min-height: 0;
+    }
+
+    #charts {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      gap: 12px;
+      min-height: 0;
+    }
+
+    .chart-box {
+      background: var(--bg2);
+      border-radius: 10px;
+      padding: 10px;
+      flex: 1;
+      min-height: 0;
+      position: relative;
+    }
+
+    .chart-box canvas {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    #sidebar {
+      width: 240px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .panel {
+      background: var(--bg2);
+      border-radius: 10px;
+      padding: 14px;
+    }
+
+    .panel h2 {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--panel-hd);
+      margin-bottom: 12px;
+    }
+
+    .param {
+      margin-bottom: 14px;
+    }
+
+    .param-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+      font-size: 0.85rem;
+    }
+
+    .param-header span:first-child { color: var(--label); font-weight: bold; }
+
+    .param-value {
+      color: #f0a500;
+      font-weight: bold;
+      min-width: 36px;
+      text-align: right;
+    }
+
+    input[type=range] {
+      width: 100%;
+      accent-color: #f0a500;
+      cursor: pointer;
+    }
+
+    #sendBtn {
+      width: 100%;
+      background: #1a4a8a;
+      color: white;
+      padding: 10px;
+      font-size: 0.9rem;
+      border-radius: 8px;
+      margin-top: 4px;
+    }
+    #sendBtn:hover { background: #2a6aba; }
+    #sendBtn:disabled { background: #333; color: #666; cursor: not-allowed; }
+
+    .sent-confirm {
+      font-size: 0.75rem;
+      color: #3a3;
+      text-align: center;
+      height: 16px;
+      margin-top: 4px;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      padding: 3px 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-mid);
+    }
+    .stat-row span:last-child { color: var(--stat-val); }
+  </style>
+</head>
+<body>
+
+<div id="top">
+  <h1>⚙ PID Live Tuner</h1>
+  <button id="connectBtn">Connect Serial</button>
+  <button id="interpBtn">Interpolation: OFF</button>
+  <button id="clearBtn">Clear</button>
+  <button id="themeBtn">☀️</button>
+  <div id="error-badge">Current Error: --</div>
+  <div id="status">Disconnected</div>
+</div>
+
+<div id="main">
+  <div id="charts">
+    <div class="chart-box"><canvas id="chart1"></canvas></div>
+    <div class="chart-box"><canvas id="chart2"></canvas></div>
+  </div>
+
+  <div id="sidebar">
+    <div class="panel">
+      <h2>PID Parameters</h2>
+
+      <div class="param">
+        <div class="param-header">
+          <span>Kp</span>
+          <span class="param-value" id="kp-val">3.00</span>
+        </div>
+        <input type="range" id="kp" min="0" max="10" step="0.05" value="3">
+      </div>
+
+      <div class="param">
+        <div class="param-header">
+          <span>Ki</span>
+          <span class="param-value" id="ki-val">0.20</span>
+        </div>
+        <input type="range" id="ki" min="0" max="2" step="0.01" value="0.2">
+      </div>
+
+      <div class="param">
+        <div class="param-header">
+          <span>Kd</span>
+          <span class="param-value" id="kd-val">0.00</span>
+        </div>
+        <input type="range" id="kd" min="0" max="10" step="0.05" value="0">
+      </div>
+
+      <button id="sendBtn" disabled>Send to Arduino</button>
+      <div class="sent-confirm" id="confirm"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Live Stats</h2>
+      <div class="stat-row"><span>Distance</span><span id="s-cm">--</span></div>
+      <div class="stat-row"><span>Setpoint</span><span id="s-ref">--</span></div>
+      <div class="stat-row"><span>Error</span><span id="s-err">--</span></div>
+      <div class="stat-row"><span>Angle</span><span id="s-ang">--</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const MAX = 200;
+  let port, reader, writer;
+  let interpolate = false;
+  let connected = false;
+
+  const cmData    = [];
+  const refData   = [];
+  const errorData = [];
+  const angleData = [];
+
+  // Chart 1 — Distance vs Setpoint
+  const ctx1 = document.getElementById('chart1').getContext('2d');
+  const chart1 = new Chart(ctx1, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [
+        { label: 'Distance (cm)', data: [], borderColor: '#e05555', borderWidth: 1.5, pointRadius: 0, tension: 0 },
+        { label: 'Setpoint (cm)', data: [], borderColor: '#5577dd', borderWidth: 1.5, pointRadius: 0, tension: 0, borderDash: [5,3] }
+      ]
+    },
+    options: {
+      animation: false,
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { display: false },
+        y: { min: 0, max: 20, ticks: { color: '#888' }, grid: { color: '#2a2a2a' } }
+      },
+      plugins: { legend: { labels: { color: '#ccc', boxWidth: 12 } } }
+    }
+  });
+
+  // Chart 2 — Error & Angle
+  const ctx2 = document.getElementById('chart2').getContext('2d');
+  const chart2 = new Chart(ctx2, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [
+        { label: 'Error',  data: [], borderColor: '#f0a500', borderWidth: 1.5, pointRadius: 0, tension: 0 },
+        { label: 'Angle',  data: [], borderColor: '#44bb44', borderWidth: 1.5, pointRadius: 0, tension: 0 }
+      ]
+    },
+    options: {
+      animation: false,
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { display: false },
+        y: { ticks: { color: '#888' }, grid: { color: '#2a2a2a' } }
+      },
+      plugins: { legend: { labels: { color: '#ccc', boxWidth: 12 } } }
+    }
+  });
+
+  function setTension(t) {
+    chart1.data.datasets.forEach(d => d.tension = t);
+    chart2.data.datasets.forEach(d => d.tension = t);
+  }
+
+  function pushData(cm, ref, err, ang) {
+    const label = cmData.length;
+    [cmData, refData, errorData, angleData].forEach((arr, i) => {
+      const val = [cm, ref, err, ang][i];
+      arr.push(val);
+      if (arr.length > MAX) arr.shift();
+    });
+
+    chart1.data.labels = cmData.map((_, i) => i);
+    chart1.data.datasets[0].data = [...cmData];
+    chart1.data.datasets[1].data = [...refData];
+
+    chart2.data.labels = errorData.map((_, i) => i);
+    chart2.data.datasets[0].data = [...errorData];
+    chart2.data.datasets[1].data = [...angleData];
+
+    chart1.update('none');
+    chart2.update('none');
+
+    // Stats
+    document.getElementById('s-cm').textContent  = cm.toFixed(2)  + ' cm';
+    document.getElementById('s-ref').textContent = ref.toFixed(2) + ' cm';
+    document.getElementById('s-err').textContent = err.toFixed(2) + ' cm';
+    document.getElementById('s-ang').textContent = ang.toFixed(2) + '°';
+
+    // Error badge
+    const badge = document.getElementById('error-badge');
+    badge.textContent = `Current Error: ${err.toFixed(2)} cm`;
+    badge.style.borderColor = Math.abs(err) > 2 ? '#cc3333' : '#33aa33';
+    badge.style.color       = Math.abs(err) > 2 ? '#ff6666' : '#66ff66';
+  }
+
+  // Serial connect
+  document.getElementById('connectBtn').addEventListener('click', async () => {
+    if (connected) {
+      try { await reader?.cancel(); await port?.close(); } catch {}
+      connected = false;
+      document.getElementById('connectBtn').textContent = 'Connect Serial';
+      document.getElementById('connectBtn').classList.remove('connected');
+      document.getElementById('status').textContent = 'Disconnected';
+      document.getElementById('sendBtn').disabled = true;
+      return;
+    }
+
+    try {
+      port = await navigator.serial.requestPort();
+      await port.open({ baudRate: 115200 });
+
+      writer = port.writable.getWriter();
+      connected = true;
+      document.getElementById('connectBtn').textContent = 'Disconnect';
+      document.getElementById('connectBtn').classList.add('connected');
+      document.getElementById('status').textContent = 'Connected';
+      document.getElementById('sendBtn').disabled = false;
+
+      // Read loop
+      const decoder = new TextDecoderStream();
+      port.readable.pipeTo(decoder.writable);
+      const inputStream = decoder.readable;
+      reader = inputStream.getReader();
+
+      let buffer = '';
+      (async () => {
+        while (true) {
+          try {
+            const { value, done } = await reader.read();
+            if (done) break;
+            buffer += value;
+            const lines = buffer.split('\n');
+            buffer = lines.pop();
+            for (const line of lines) {
+              const parts = line.trim().split(' ');
+              if (parts.length === 4) {
+                const [cm, ref, err, ang] = parts.map(Number);
+                if (!isNaN(cm)) pushData(cm, ref, err, ang);
+              }
+            }
+          } catch { break; }
+        }
+      })();
+    } catch (e) {
+      document.getElementById('status').textContent = 'Failed: ' + e.message;
+    }
+  });
+
+  // Sliders
+  ['kp','ki','kd'].forEach(id => {
+    const slider = document.getElementById(id);
+    const display = document.getElementById(id + '-val');
+    slider.addEventListener('input', () => {
+      display.textContent = parseFloat(slider.value).toFixed(2);
+    });
+  });
+
+  // Send to Arduino
+  document.getElementById('sendBtn').addEventListener('click', async () => {
+    if (!writer) return;
+    const kp = document.getElementById('kp').value;
+    const ki = document.getElementById('ki').value;
+    const kd = document.getElementById('kd').value;
+    const msg = `PID:${kp},${ki},${kd}\n`;
+    await writer.write(new TextEncoder().encode(msg));
+
+    const confirm = document.getElementById('confirm');
+    confirm.textContent = `Sent: Kp=${kp} Ki=${ki} Kd=${kd}`;
+    setTimeout(() => confirm.textContent = '', 2000);
+  });
+
+  // Theme toggle
+  let lightMode = false;
+  document.getElementById('themeBtn').addEventListener('click', () => {
+    lightMode = !lightMode;
+    document.body.classList.toggle('light', lightMode);
+    document.getElementById('themeBtn').textContent = lightMode ? '🌙' : '☀️';
+
+    const gridColor  = lightMode ? '#ddd'  : '#2a2a2a';
+    const tickColor  = lightMode ? '#555'  : '#888';
+    const labelColor = lightMode ? '#333'  : '#ccc';
+
+    [chart1, chart2].forEach(chart => {
+      chart.options.scales.y.ticks.color = tickColor;
+      chart.options.scales.y.grid.color  = gridColor;
+      chart.options.plugins.legend.labels.color = labelColor;
+      chart.update('none');
+    });
+  });
+  document.getElementById('interpBtn').addEventListener('click', () => {
+    interpolate = !interpolate;
+    const btn = document.getElementById('interpBtn');
+    btn.textContent = `Interpolation: ${interpolate ? 'ON' : 'OFF'}`;
+    btn.classList.toggle('on', interpolate);
+    setTension(interpolate ? 0.4 : 0);
+  });
+
+  // Clear
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    [cmData, refData, errorData, angleData].forEach(a => a.length = 0);
+    chart1.data.labels = [];
+    chart1.data.datasets.forEach(d => d.data = []);
+    chart2.data.labels = [];
+    chart2.data.datasets.forEach(d => d.data = []);
+    chart1.update();
+    chart2.update();
+  });
+</script>
+</body>
+</html>
+```
