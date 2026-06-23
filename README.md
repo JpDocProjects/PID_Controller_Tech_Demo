@@ -1,29 +1,51 @@
-# PID_Controller_Tech_Demo
+# PID Controller Tech Demo — Ball & Beam
 
-A Ball & Beam–style Arduino project that uses a PID control system to regulate the position of an object along a straight line.  
+An Arduino-based Ball & Beam system that uses a PID control loop to regulate the position of an object along a track. The system reads position via an ultrasonic sensor, computes a correction, and drives a metal-gear servo to move the beam — all in real time.
 
-The main components of the build are an ultrasonic sensor, a metal gear servo, and a LEGO-based mechanical support structure.
-
-![Black Background](images/Black_Background(edited).png)
+![Project Photo](images/black_background(edited).png)
 
 ---
 
-# Overview
+## How It Works
 
-This project demonstrates a closed-loop control system using a PID controller to stabilize and position an object in real time.
+A potentiometer sets the **target position**. The ultrasonic sensor measures the object's actual position and computes the **error** (difference from target). A PID controller processes that error each cycle and outputs an updated servo angle to nudge the object toward the goal.
 
----
-
-# System Operation
-
-The ultrasonic sensor measures the object’s distance relative to a reference point defined by a potentiometer.  
-
-This measurement is compared to the target position, producing an error signal. The PID controller processes this error and calculates the correction needed to adjust the servo angle, reducing the error and guiding the object toward the desired position.
-
-![PID Demo](images/Example_2_GIF.gif)
+![Demo](images/Example_2_GIF.gif)
 
 ---
 
-# PID Controller
+## PID Controller
 
-The final control output (servo angle) is calculated as:
+The servo angle is computed as:
+angle = base + P + I + D
+| Term | Formula |
+|------|---------|
+| **P** (Proportional) | `error × Kp` |
+| **I** (Integral) | `∑(error × dt) × Ki` |
+| **D** (Derivative) | `((error − prev_error) / dt) × Kd` |
+
+The constants `Kp`, `Ki`, and `Kd` must be tuned empirically for stable behavior.
+
+---
+
+## Materials
+
+| Component | Notes |
+|-----------|-------|
+| Arduino UNO | Microcontroller |
+| Ultrasonic sensor | Measures object position |
+| Metal-gear micro servo | Drives beam angle |
+| Potentiometer | Sets target position |
+| LEGO | Structural frame & joints |
+| Toy car | Object being balanced |
+| Cardboard | Additional structure |
+
+---
+
+## Order of Operations
+
+1. Potentiometer defines the **target position**
+2. Ultrasonic sensor measures the **current position**
+3. PID controller computes the **error** and derives a corrective servo angle
+4. Servo adjusts the beam angle to move the object toward the target
+5. Loop repeats every cycle
