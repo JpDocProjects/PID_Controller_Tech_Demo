@@ -12,3 +12,17 @@ is defined using a potentiometer. This error signal is then processed by a PID c
 which calculates the new angle for the micro servo in order to reduce the error and move the
 object toward the target position.
 
+# PID Controller
+
+- The final PID output (angle) is calculated as:
+
+base value + (P value) + (I value) + (D value)
+
+- P value = (error offset * P constant)
+- I value = (integral * I constant)
+Where integral is the accumulus per cycle of (error * dt)
+- D value = ((error - previous_error) / dt) * D constant
+
+- When added, these values give the final servo desired position. The constants need to be
+tweaked until desired results.
+
