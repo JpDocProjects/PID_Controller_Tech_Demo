@@ -18,10 +18,12 @@ object toward the target position.
 
 base value + (P value) + (I value) + (D value)
 
-- P value = (error offset * P constant)
-- I value = (integral * I constant)
+P value = (error offset * P constant)
+
+I value = (integral * I constant)
 Where integral is the accumulus per cycle of (error * dt)
-- D value = ((error - previous_error) / dt) * D constant
+
+D value = ((error - previous_error) / dt) * D constant
 
 - When added, these values give the final servo desired position. The constants need to be
 tweaked until desired results.
