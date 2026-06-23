@@ -21,6 +21,12 @@ The final PID output (angle) is calculated as:
 
 When summed, these give the final desired servo position. The constants need to be tuned until the desired behavior is achieved.
 
+## Graph Software
+
+- When using the Arduino IDE, the code need to be updated evey time that you want to change the PID values, so I asked Claude for an
+HTML extension that lets me comunicate with the COM3 Port without needing to restart the system every time. As a bonus, the software also has
+a graphing system that makes it easier for PID tuning.
+
 ## Materials Used
 - Arduino UNO
 - LEGO
