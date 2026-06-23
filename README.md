@@ -4,7 +4,7 @@ A Ball & Beam–style Arduino project that uses a PID control system to regulate
 
 The main components of the build are an ultrasonic sensor, a metal gear servo, and a LEGO-based mechanical support structure.
 
-![Black Background](images/black_background(edited).png)
+![Black Background](images/Black_Background(edited).png)
 
 ---
 
