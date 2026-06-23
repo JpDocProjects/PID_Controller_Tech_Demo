@@ -12,6 +12,8 @@ is defined using a potentiometer. This error signal is then processed by a PID c
 which calculates the new angle for the micro servo in order to reduce the error and move the
 object toward the target position.
 
+![PID Demo](images/Example_2_GIF.gif)
+
 # PID Controller
 
 - The final PID output (angle) is calculated as:
@@ -26,4 +28,14 @@ D value = ((error - previous_error) / dt) * D constant
 
 - When added, these values give the final servo desired position. The constants need to be
 tweaked until desired results.
+
+# Materials used
+
+- Arduino UNO
+- LEGO
+- Toy car
+- Metal-gared microservo
+- Cardboard
+- Potentiometer
+- Ultrasonic sensor
 
