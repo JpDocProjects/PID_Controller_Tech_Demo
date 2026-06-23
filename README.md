@@ -16,8 +16,7 @@ A potentiometer sets the **target position**. The ultrasonic sensor measures the
 
 ## PID Controller
 
-The servo angle is computed as:
-angle = base + P + I + D
+The servo angle is computed as: angle = base + P + I + D
 | Term | Formula |
 |------|---------|
 | **P** (Proportional) | `error × Kp` |
